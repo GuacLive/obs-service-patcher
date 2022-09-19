@@ -48,5 +48,5 @@ jobs:
       - name: go build
         run: go build
 
-      - name: ./guac-obs-service-patcher
-        run: ./guac-obs-service-patcher
+      - name: ./obs-service-patcher
+        run: ./obs-service-patcher
