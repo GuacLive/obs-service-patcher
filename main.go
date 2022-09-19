@@ -64,6 +64,9 @@ func panicAndPause(v ...interface{}) {
 func main() {
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
+	
+	fmt.Printf("%s OBS Service Patcher", serviceName)
+	fmt.Println("Original tool developed by Glimesh, MIT license");
 
 	serviceEntry := getServiceContents(serviceUrl)
 
