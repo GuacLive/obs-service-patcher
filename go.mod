@@ -1,3 +1,3 @@
-module github.com/guaclive/guac-obs-service-patcher
+module github.com/guaclive/obs-service-patcher
 
 go 1.16
