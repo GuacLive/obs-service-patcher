@@ -1,4 +1,4 @@
-project_name: glimesh-obs-service-patcher
+project_name: guac-obs-service-patcher
 builds:
   - env: [CGO_ENABLED=0]
     goos:

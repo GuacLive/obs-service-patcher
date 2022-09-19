@@ -1,3 +1,3 @@
-module github.com/glimesh/glimesh-obs-service-patcher
+module github.com/guaclive/guac-obs-service-patcher
 
 go 1.16

@@ -47,13 +47,16 @@ type obsService struct {
 type logWriter struct {
 }
 
+const serviceName = "Guac"
+const serviceUrl = "https://api.guac.tv/v2/ingests/obs"
+
 func (writer logWriter) Write(bytes []byte) (int, error) {
 	return fmt.Print(string(bytes))
 }
 
 func panicAndPause(v ...interface{}) {
 	log.Print(v...)
-	fmt.Println("Glimesh OBS Service Patcher Failed!\nPress the Enter key or close this window.")
+	fmt.Printf("%s OBS Service Patcher Failed!\nPress the Enter key or close this window.", serviceName)
 	fmt.Scanln()
 	os.Exit(1)
 }
@@ -62,12 +65,12 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
 
-	glimeshServiceEntry := getGlimeshServiceContents("https://glimesh-static-assets.nyc3.digitaloceanspaces.com/obs-glimesh-service.json")
+	serviceEntry := getServiceContents(serviceUrl)
 
-	var glimeshService obsService
-	err := json.Unmarshal([]byte(glimeshServiceEntry), &glimeshService)
+	var service obsService
+	err := json.Unmarshal([]byte(serviceEntry), &service)
 	if err != nil {
-		panicAndPause("Problem unmarshalling Glimesh JSON entry.")
+		panicAndPause("Problem unmarshalling JSON entry.")
 	}
 
 	log.Println()
@@ -81,16 +84,16 @@ func main() {
 	log.Println()
 
 	for _, servicePath := range servicePaths {
-		patchFile(path.Join(servicePath, "services.json"), glimeshService)
+		patchFile(path.Join(servicePath, "services.json"), service)
 	}
 
 	log.Println()
 
-	fmt.Println("Glimesh OBS Service Patcher Completed!\nPress the Enter key or close this window.")
+	fmt.Printf("%s OBS Service Patcher Completed!\nPress the Enter key or close this window.", serviceName)
 	fmt.Scanln()
 }
 
-func getGlimeshServiceContents(url string) []byte {
+func getServiceContents(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
 		panicAndPause(err)
@@ -105,7 +108,7 @@ func getGlimeshServiceContents(url string) []byte {
 		panicAndPause(err)
 	}
 
-	log.Printf("💽 Downloaded Glimesh Service Definition from %s\n", url)
+	log.Printf("💽 Downloaded %s Service Definition from %s\n", serviceName, url)
 
 	return data
 }
@@ -120,11 +123,11 @@ func patchFile(filePath string, newService obsService) {
 	byteValue, err := ioutil.ReadAll(servicesFile)
 	json.Unmarshal(byteValue, &services)
 
-	foundGlimesh := strings.Contains(string(byteValue), "Glimesh")
+	found := strings.Contains(string(byteValue), serviceName)
 
 	servicesFile.Close()
 
-	if foundGlimesh == false {
+	if found == false {
 		services.Services = append(services.Services, newService)
 
 		newContents, err := customJSONMarshal(services)
@@ -136,7 +139,7 @@ func patchFile(filePath string, newService obsService) {
 
 		log.Printf("✅ Patched services file: %s", filePath)
 	} else {
-		log.Printf("✅ Glimesh already exists in: %s", filePath)
+		log.Printf("✅ %s already exists in: %s", serviceName, filePath)
 	}
 }
 
